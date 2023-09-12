@@ -78,17 +78,17 @@ class AuthController extends Controller
 
     public function countByRegion()
     {
-        $kecamatans = User::select('kecamatan')
-                        ->distinct()
-                        ->get();
+        $kecamatans = User::where('status', '!=', 'Admin')->select('kecamatan')
+            ->distinct()
+            ->get();
 
         $output = [];
         foreach ($kecamatans as $kecamatan) {
             $kelurahanCounts = User::where('kecamatan', $kecamatan->kecamatan)
-                                ->groupBy('kelurahan')
-                                ->selectRaw('kelurahan as Nama, COUNT(*) as Jumlah')
-                                ->get()
-                                ->toArray();
+                ->groupBy('kelurahan')
+                ->selectRaw('kelurahan as Nama, COUNT(*) as Jumlah')
+                ->get()
+                ->toArray();
 
             $output['kecamatan'][] = [
                 'Nama' => $kecamatan->kecamatan,
@@ -99,10 +99,6 @@ class AuthController extends Controller
 
         return response()->json($output);
     }
-
-
-
-
 
     public function register(Request $request)
     {
