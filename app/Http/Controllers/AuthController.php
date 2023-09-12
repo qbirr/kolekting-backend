@@ -76,6 +76,34 @@ class AuthController extends Controller
         return response()->json(['message' => 'Password berhasil diubah'], 200);
     }
 
+    public function countByRegion()
+    {
+        $kecamatans = User::select('kecamatan')
+                        ->distinct()
+                        ->get();
+
+        $output = [];
+        foreach ($kecamatans as $kecamatan) {
+            $kelurahanCounts = User::where('kecamatan', $kecamatan->kecamatan)
+                                ->groupBy('kelurahan')
+                                ->selectRaw('kelurahan as Nama, COUNT(*) as Jumlah')
+                                ->get()
+                                ->toArray();
+
+            $output['kecamatan'][] = [
+                'Nama' => $kecamatan->kecamatan,
+                'Jumlah' => User::where('kecamatan', $kecamatan->kecamatan)->count(),
+                'Kelurahan' => $kelurahanCounts
+            ];
+        }
+
+        return response()->json($output);
+    }
+
+
+
+
+
     public function register(Request $request)
     {
         $messages = [
@@ -330,7 +358,7 @@ class AuthController extends Controller
             'kabupaten' => 'required|string',
             'kecamatan' => 'required|string',
             'kelurahan' => 'required|string',
-            'kode_referal'=> 'required|string',
+            'kode_referal' => 'required|string',
             'rt' => 'required|string',
             'rw' => 'required|string',
             'lrg' => 'required|string',

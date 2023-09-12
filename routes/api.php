@@ -47,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/users/update', [AuthController::class, 'updateUser']);
     Route::delete('/users/{id}', [AuthController::class, 'destroy']);
+    Route::get('/users/count', [AuthController::class, 'countByRegion']);
+
 
 });
 
