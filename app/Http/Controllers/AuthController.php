@@ -84,7 +84,8 @@ class AuthController extends Controller
 
         $output = [];
         foreach ($kecamatans as $kecamatan) {
-            $kelurahanCounts = User::where('kecamatan', $kecamatan->kecamatan)
+            $kelurahanCounts = User::where('status', '!=', 'Admin')
+                ->where('kecamatan', $kecamatan->kecamatan)
                 ->groupBy('kelurahan')
                 ->selectRaw('kelurahan as Nama, COUNT(*) as Jumlah')
                 ->get()
@@ -92,7 +93,8 @@ class AuthController extends Controller
 
             $output['kecamatan'][] = [
                 'Nama' => $kecamatan->kecamatan,
-                'Jumlah' => User::where('kecamatan', $kecamatan->kecamatan)->count(),
+                'Jumlah' => User::where('status', '!=', 'Admin')
+                ->where('kecamatan', $kecamatan->kecamatan)->count(),
                 'Kelurahan' => $kelurahanCounts
             ];
         }
